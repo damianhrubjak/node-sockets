@@ -23,15 +23,49 @@ const io = new Server(server, {
 // express cors
 app.use(cors(corsConfig));
 
+type User = { username: string; socketId: string };
+let users: User[] = [];
+
 io.on("connection", (socket) => {
   console.log(`⚡: ${socket.id} user just connected!`);
+
   socket.on("disconnect", () => {
-    console.log("🔥: A user disconnected");
+    console.log(`👋: User with socketId: ${socket.id} has disconnected `);
+
+    //remove user from array
+    users = users.filter((user) => user.socketId !== socket.id);
+
+    //Sends the list of users to the client
+    io.emit("users-response", users);
+    socket.disconnect();
+  });
+
+  //sends the message to all the users on the server
+  socket.on("message", (message) => {
+    io.emit("message-response", {
+      date: new Date(),
+      name: "HrubjakDamian",
+      message,
+    });
+  });
+
+  //Listens when a new user joins the server
+  socket.on("new-user", (user: User) => {
+    //Adds the new user to the list of users
+    users.push(user);
+
+    console.log(users);
+    //Sends the list of users to the client
+    io.emit("users-response", users);
   });
 });
 
 app.get("/", async (req: Request, res: Response) => {
-  res.json({ status: "Running" });
+  res.json({
+    status: "Running",
+    date: new Date(),
+    name: "HrubjakDamian",
+  });
 });
 
 server.listen(port, () => {

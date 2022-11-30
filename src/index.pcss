@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  @apply bg-[#000509] text-slate-200;
+}
+
+.menu-item {
+  @apply mt-4 block w-full border-2 border-slate-400 p-4 text-xl font-normal text-slate-400 transition duration-300 hover:border-white hover:text-white;
+}
+.menu-item.active {
+  @apply border-purple-400 text-purple-400;
+}

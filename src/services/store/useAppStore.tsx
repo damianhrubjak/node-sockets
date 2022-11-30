@@ -1,14 +1,21 @@
-import { connect, Socket } from "socket.io-client";
 import create from "zustand";
+import { persist } from "zustand/middleware";
 
 interface AppStoreType {
-  socket: Socket;
   username: string | null;
+  setUsername: (username: string) => void;
 }
 
-const useAppStore = create<AppStoreType>(() => ({
-  socket: connect(import.meta.env.VITE_BACKEND_URL),
-  username: null,
-}));
+const useAppStore = create<AppStoreType>()(
+  persist(
+    (set) => ({
+      username: null,
+      setUsername: (username: string) => set(() => ({ username: username })),
+    }),
+    {
+      name: "app-storage",
+    }
+  )
+);
 
 export default useAppStore;
