@@ -2,7 +2,7 @@ import cors from "cors";
 import * as dotenv from "dotenv";
 import express, { Request, Response } from "express";
 import http from "http";
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 
 dotenv.config({ path: "../.env" });
 const port = process.env.BACKEND_PORT;
@@ -26,7 +26,7 @@ app.use(cors(corsConfig));
 type User = { username: string; socketId: string };
 let users: User[] = [];
 
-io.on("connection", (socket) => {
+io.on("connection", (socket: Socket) => {
   console.log(`⚡: ${socket.id} user just connected!`);
 
   socket.on("disconnect", () => {
