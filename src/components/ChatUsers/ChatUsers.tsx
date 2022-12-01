@@ -17,7 +17,7 @@ function ChatUsers({ userSocketId }: Props) {
           key={socketId}
         >
           {username}
-          {socketId === socketId && (
+          {socketId === userSocketId && (
             <span className="ml-2 text-sm text-slate-500">
               Tento používateľ
             </span>
