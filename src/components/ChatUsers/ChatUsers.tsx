@@ -1,13 +1,13 @@
-import { User } from "@/types";
+import useAppStore from "@/services/store/useAppStore";
 
 type Props = {
-  users: User[];
   userSocketId: string;
 };
 
-function ChatUsers({ users, userSocketId }: Props) {
+function ChatUsers({ userSocketId }: Props) {
+  const users = useAppStore((state) => state.users);
   return (
-    <div className="fixed right-4 top-4 bottom-4 h-[100vh-2rem] w-80 rounded-xl border-2 border-purple-500 p-4">
+    <div className="h-[calc(100vh-2rem)] w-80 rounded-xl border-2 border-purple-500 p-4">
       <h1 className="mb-8 text-2xl">Používatelia</h1>
       {users.map(({ username, socketId }) => (
         <p

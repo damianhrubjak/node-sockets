@@ -41,11 +41,11 @@ io.on("connection", (socket) => {
   });
 
   //sends the message to all the users on the server
-  socket.on("message", (message) => {
+  socket.on("message", ({ message, username }) => {
     io.emit("message-response", {
       date: new Date(),
-      name: "HrubjakDamian",
-      message,
+      message: message,
+      username: username,
     });
   });
 

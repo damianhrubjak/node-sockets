@@ -1,19 +1,22 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 
 import { isEmpty, isNull } from "lodash-es";
 import { useNavigate } from "react-router-dom";
 
+import ChatMessages from "@/components/ChatMessages";
 import ChatUsers from "@/components/ChatUsers";
 import useAppStore from "@/services/store/useAppStore";
 import useSocketStore from "@/services/store/useSocketStore";
-import { User } from "@/types";
+import { Message } from "@/types";
 
 function Chat() {
-  const [messages, setMessages] = useState<string[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
+  const { username, setUsers, addMessage } = useAppStore((state) => ({
+    username: state.username,
+    setUsers: state.setUsers,
+    addMessage: state.addMessage,
+  }));
 
   const socket = useSocketStore((state) => state.socket);
-  const username = useAppStore((state) => state.username);
 
   const navigate = useNavigate();
 
@@ -25,17 +28,28 @@ function Chat() {
   }, []);
 
   useEffect(() => {
-    socket?.on("message-response", (message) =>
-      setMessages([...messages, message])
-    );
+    socket?.on("message-response", (message: Message) => {
+      addMessage(message);
+    });
     socket?.on("users-response", (users) => setUsers(users));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
 
+  const sendMessage = useCallback(
+    (message: string) => {
+      socket?.emit("message", { message, username });
+    },
+    [socket, username]
+  );
+
   return (
     <div>
       {socket?.connected && (
-        <ChatUsers userSocketId={socket?.id} users={users} />
+        <div className="flex gap-4">
+          <ChatMessages onSubmit={sendMessage} />
+
+          <ChatUsers userSocketId={socket?.id} />
+        </div>
       )}
     </div>
   );
